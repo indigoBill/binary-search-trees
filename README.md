@@ -2,7 +2,7 @@
 
 This project features a balanced binary search tree created using JavaScript.
 
-## Binary Search Tree Methods
+## Methods
 
 - `buildTree(array)` : takes an array of data and turns it into a balanced binary tree full of Node objects appropriately placed. The buildTree function should return the level-0 root node.
 - `insert(value)` : inserts the given value into the tree.
