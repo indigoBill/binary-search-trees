@@ -8,10 +8,6 @@ class Node {
 
 class Tree {
     root;
-
-    constructor(array){
-        this.array = array;
-    }
     
     buildTree(array){
         const finArr = [];
@@ -34,8 +30,7 @@ class Tree {
             return node;
         }
 
-        this.root = sortedArrayToBST(finArr, finArr[0], finArr.length - 1);
-
+        this.root = sortedArrayToBST(finArr, 0, finArr.length - 1);
         return this.root;
     }
 
@@ -146,8 +141,8 @@ class Tree {
 
             if(queue.length === 0) return;
 
-            if(node.left) queue.push(node.left)
-            if(node.right) queue.push(node.right)
+            if(node.left) queue.push(node.left);
+            if(node.right) queue.push(node.right);
 
             levelOrderArr.push(queue.shift());
 
@@ -239,6 +234,88 @@ class Tree {
         if(callback) return postOrderArr.map(callback);
         else return postOrderArr.map((node) => node.data);
     }
+
+    height(node){
+        const queue = [];
+        let height = 0;
+
+        if(!node.left && !node.right) return height;
+
+        queue.push([node]);
+
+        while(queue.length !== 0){
+            const currLevelArr = [];
+
+            queue[0].forEach((node) => {
+                if(node.left || node.right){
+                    if(node.left) currLevelArr.push(node.left);
+                    if(node.right) currLevelArr.push(node.right);
+                } 
+            });
+
+            if(currLevelArr.length !== 0){
+                queue.push(currLevelArr);
+                height++;
+            }
+
+            queue.shift();
+        }
+
+        return height;
+    }
+
+    depth(node){
+        const queue = [];
+        let depth = 0;
+
+        if(node === this.root) return depth;
+
+        queue.push([this.root]);
+
+        while(queue.length !== 0){
+            if(!queue[0].includes(node)){
+                const currLevelArr = [];
+
+                queue[0].forEach((nodeInArr) => {
+                    if(nodeInArr.left || nodeInArr.right){
+                        if(nodeInArr.left) currLevelArr.push(nodeInArr.left);
+                        if(nodeInArr.right) currLevelArr.push(nodeInArr.right);
+                    } 
+                });
+    
+                if(currLevelArr.length !== 0){
+                    queue.push(currLevelArr);
+                    depth++;
+                }
+            }
+            queue.shift();
+        }
+        return depth;
+    }
+
+    isBalanced(){
+        let leftHeight = 0;
+        let rightHeight = 0;
+        let difference;
+
+        if(this.root.left) leftHeight = this.height(this.root.left);
+        if(this.root.right) rightHeight = this.height(this.root.right);
+
+        difference = leftHeight - rightHeight;
+
+        if(difference > 1 || difference < -1) return false;
+
+        return true;
+    }
+
+    rebalance(){
+        if(!(this.isBalanced())){
+            const levelOrderArr = this.levelOrder();
+            return this.buildTree(levelOrderArr);
+        }else{
+            return this.root;
+        }
+    }
 }
 
 const prettyPrint = (node, prefix = "", isLeft = true) => {
@@ -254,14 +331,51 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
     }
 };
 
+function createRandNumArray(){
+    const arr = [];
+    const arrLength = 15;
+    const max = 100;
+    const min = 0;
 
-const tree = new Tree([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]);
-const build = tree.buildTree([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
-const insert = tree.insert(6);
-// prettyPrint(insert);
-const deleteNode = tree.deleteItem(8);
-prettyPrint(deleteNode);
-console.log(tree.levelOrder())
+    for(let i = 0; i < arrLength; i++){
+        const randNum = Math.floor(Math.random() * (max - min) + min);
+
+        arr[i] = randNum;
+    }
+
+    return arr;
+}
+
+function unbalanceTree(node){
+    const arr = [];
+    const arrLength = 5;
+    const min = 101;
+    const max = 150;
+
+    for(let i = 0; i < arrLength; i++){
+        const randNum = Math.floor(Math.random() * (max - min) + min);
+
+        arr[i] = randNum;
+    }
+
+    arr.map((num) => node.insert(num));
+
+    return node.root;
+}
+
+const tree = new Tree();
+prettyPrint(tree.buildTree(createRandNumArray()));
+console.log(tree.isBalanced());
+console.log(tree.levelOrder());
 console.log(tree.preOrder());
-console.log(tree.inOrder());
 console.log(tree.postOrder());
+console.log(tree.inOrder());
+prettyPrint(unbalanceTree(tree));
+console.log(tree.isBalanced());
+prettyPrint(tree.rebalance());
+console.log(tree.isBalanced());
+console.log(tree.levelOrder());
+console.log(tree.preOrder());
+console.log(tree.postOrder());
+console.log(tree.inOrder());
+
