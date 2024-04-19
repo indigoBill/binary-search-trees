@@ -137,7 +137,7 @@ class Tree {
         const levelOrderArr = [];
 
         function addToQueue(node){
-            if(node && !(queue.includes(node))) queue.push(node);
+            if(node && queue[0] !== node) queue.push(node);
 
             if(queue.length === 0) return;
 
@@ -160,7 +160,7 @@ class Tree {
         const preorderArr = [];
 
         function addToStack(node){
-            if(node && !(stack.includes(node))) stack.push(node);
+            if(node && stack[stack.length - 1] !== node) stack.push(node);
 
             preorderArr.push(stack.pop());
 
@@ -183,7 +183,7 @@ class Tree {
         const inorderArr = [];
 
         function addToStack(node){
-            if(node && !(stack.includes(node))) stack.push(node);
+            if(node && stack[stack.length - 1] !== node) stack.push(node);
 
             if(node.left){
                 stack.push(node.left);
@@ -193,13 +193,12 @@ class Tree {
             }
 
             if(node.right){
+
+                if(node.left) inorderArr.push(stack.pop());
+
                 stack.push(node.right);
                 addToStack(node.right);
             }
-
-            const strayNode = stack.pop();
-
-            if(strayNode && !(inorderArr.includes(strayNode))) inorderArr.push(strayNode);
         }
 
         addToStack(this.root);
@@ -213,7 +212,8 @@ class Tree {
         const postOrderArr = [];
 
         function addToStack(node){
-            if(node && !(stack.includes(node))) stack.push(node);
+            if(node && stack[stack.length - 1] !== node) stack.push(node);
+
 
             if(node.left) addToStack(node.left);
 
